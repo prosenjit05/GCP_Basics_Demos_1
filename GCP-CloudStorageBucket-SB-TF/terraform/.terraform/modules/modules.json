@@ -1,1 +1,1 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"google_storage_bucket","Source":"./terraform/modules/my_google_storage_bucket","Dir":""}]}
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"google_storage_bucket","Source":"./modules/my_google_storage_bucket","Dir":"modules/my_google_storage_bucket"}]}

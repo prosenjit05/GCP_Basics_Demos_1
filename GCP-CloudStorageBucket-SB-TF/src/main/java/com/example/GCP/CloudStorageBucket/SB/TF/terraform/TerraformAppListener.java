@@ -18,8 +18,7 @@ public class TerraformAppListener implements ApplicationListener<ApplicationEven
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ContextRefreshedEvent) {
             // Execute Terraform apply on startup
-            System.out.println("\nMy Application Started - " +
-                    "Now starting terraform apply\n");
+            System.out.println("\nMy Application Started\n");
             executeTerraformApply();
         } else if (event instanceof ContextClosedEvent) {
             // Execute Terraform destroy on shutdown
@@ -30,6 +29,7 @@ public class TerraformAppListener implements ApplicationListener<ApplicationEven
 
     private void executeTerraformApply() {
         try {
+            System.out.println("\nStarting: terraform init\n");
             //*********** terraform init starts ***********
             ProcessBuilder tfInitProcessBuilder = new ProcessBuilder("terraform",
                     "init");
@@ -47,6 +47,7 @@ public class TerraformAppListener implements ApplicationListener<ApplicationEven
             //*********** terraform init ends ***********
 
             //*********** terraform plan starts ***********
+            System.out.println("\nStarting: terraform plan\n");
             ProcessBuilder tfPlanProcessBuilder = new ProcessBuilder("terraform",
                     "plan");
             tfPlanProcessBuilder.directory(new File("terraform"));
@@ -62,14 +63,14 @@ public class TerraformAppListener implements ApplicationListener<ApplicationEven
             }
             //*********** terraform plan starts ***********
 
-            System.out.println("\nTerraform Apply Done!\n");
+            System.out.println("\nTerraform All Steps Done!\n");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
     private static void captureAndPrintStream(InputStream inputStream, String streamType) {
-        new Thread(() -> {
+        //new Thread(() -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -78,7 +79,7 @@ public class TerraformAppListener implements ApplicationListener<ApplicationEven
             } catch (IOException e) {
                 System.out.println(e);
             }
-        }).start();
+        //}).start();
     }
 
 }
