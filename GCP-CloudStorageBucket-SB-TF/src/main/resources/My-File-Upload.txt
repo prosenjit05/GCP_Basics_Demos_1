@@ -1,0 +1,1 @@
+Hello GCP Cloud storage bucket - commit 2

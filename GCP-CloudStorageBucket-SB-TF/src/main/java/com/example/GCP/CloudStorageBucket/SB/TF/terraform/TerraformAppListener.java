@@ -3,10 +3,8 @@ package com.example.GCP.CloudStorageBucket.SB.TF.terraform;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.core.io.Resource;
 
 import java.io.*;
 
@@ -22,8 +20,8 @@ public class TerraformAppListener implements ApplicationListener<ApplicationEven
             executeTerraformApply();
         } else if (event instanceof ContextClosedEvent) {
             // Execute Terraform destroy on shutdown
-            //executeTerraformDestroy();
             System.out.println("\nMy Application Closed\n");
+            //executeTerraformDestroy();
         }
     }
 
@@ -46,24 +44,49 @@ public class TerraformAppListener implements ApplicationListener<ApplicationEven
             }
             //*********** terraform init ends ***********
 
-            //*********** terraform plan starts ***********
-            System.out.println("\nStarting: terraform plan\n");
-            ProcessBuilder tfPlanProcessBuilder = new ProcessBuilder("terraform",
-                    "plan");
-            tfPlanProcessBuilder.directory(new File("terraform"));
-            Process tfPlanProcess = tfPlanProcessBuilder.start();
-            captureAndPrintStream(tfPlanProcess.getInputStream(), "OUTPUT");
-            captureAndPrintStream(tfPlanProcess.getErrorStream(), "ERROR");
+            //*********** terraform apply starts ***********
+            System.out.println("\nStarting: terraform apply\n");
+            ProcessBuilder tfApplyProcessBuilder = new ProcessBuilder("terraform",
+                    "apply","-auto-approve");
+            tfApplyProcessBuilder.directory(new File("terraform"));
+            Process tfApplyProcess = tfApplyProcessBuilder.start();
+            captureAndPrintStream(tfApplyProcess.getInputStream(), "OUTPUT");
+            captureAndPrintStream(tfApplyProcess.getErrorStream(), "ERROR");
             // Wait for the process to finish
-            int exitCodeTfPlan = tfInitProcess.waitFor();
-            System.out.println("My \"terraform plan\" exited with code: " + exitCodeTfPlan);
+            int exitCodeTfApply= tfApplyProcess.waitFor();
+            System.out.println("My \"terraform apply\" exited with code: " + exitCodeTfApply);
 
-            if(exitCodeTfPlan==1){
-                throw new RuntimeException("Error in \"terraform plan\". Stopping the App.");
+            if(exitCodeTfApply==1){
+                throw new RuntimeException("Error in \"terraform apply\". Stopping the App.");
             }
-            //*********** terraform plan starts ***********
+            //*********** terraform apply starts ***********
 
-            System.out.println("\nTerraform All Steps Done!\n");
+            System.out.println("\nTerraform Apply All Steps Done Successfully!\n");
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void executeTerraformDestroy(){
+        try{
+            //*********** terraform destroy starts ***********
+            System.out.println("\nStarting: terraform destroy\n");
+            ProcessBuilder tfDestroyProcessBuilder = new ProcessBuilder("terraform",
+                    "destroy","-auto-approve");
+            tfDestroyProcessBuilder.directory(new File("terraform"));
+            Process tfDestroyProcess = tfDestroyProcessBuilder.start();
+            captureAndPrintStream(tfDestroyProcess.getInputStream(), "OUTPUT");
+            captureAndPrintStream(tfDestroyProcess.getErrorStream(), "ERROR");
+            // Wait for the process to finish
+            int exitCodeTfDestroy= tfDestroyProcess.waitFor();
+            System.out.println("My \"terraform destroy\" exited with code: " + exitCodeTfDestroy);
+
+            if(exitCodeTfDestroy==1){
+                throw new RuntimeException("Error in \"terraform destroy\". Stopping the App.");
+            }
+            //*********** terraform destroy starts ***********
+
+            System.out.println("\nTerraform destroy All Steps Done Successfully!\n");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
