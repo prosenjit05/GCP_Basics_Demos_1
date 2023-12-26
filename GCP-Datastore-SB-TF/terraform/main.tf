@@ -10,3 +10,15 @@ resource "google_firestore_database" "my-firestore-db-pro" {
   deletion_policy             = "DELETE"
   app_engine_integration_mode = "DISABLED"
 }
+
+resource "google_datastore_index" "my-firestore-db-pro-index" {
+  kind = "Book"
+  properties {
+    name      = "bookSerialNumber"
+    direction = "ASCENDING"
+  }
+  properties {
+    name      = "bookName"
+    direction = "ASCENDING"
+  }
+}
