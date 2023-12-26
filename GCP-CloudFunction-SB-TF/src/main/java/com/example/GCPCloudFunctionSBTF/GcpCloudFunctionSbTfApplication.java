@@ -10,4 +10,7 @@ public class GcpCloudFunctionSbTfApplication {
 		SpringApplication.run(GcpCloudFunctionSbTfApplication.class, args);
 	}
 
+	public static String helloWorld() {
+		return "Hello, World!";
+	}
 }
